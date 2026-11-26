@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h3>My courses</h3>
+  <a class="btn btn-primary" href="{% url 'course_create' %}">+ New course</a></div>
+<div class="row g-3">
+  {% for c in courses %}
+  <div class="col-md-4"><div class="card h-100"><div class="card-body">
+    <h5>{{ c.title }}</h5>
+    <p class="small text-muted">{{ c.lessons.count }} lessons &middot; {{ c.enrollments.count }} students &middot; {{ c.quizzes.count }} quizzes</p>
+    <a class="btn btn-primary btn-sm" href="{% url 'course_detail' c.pk %}">Manage</a>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'course_students' c.pk %}">Students</a>
+  </div></div></div>
+  {% empty %}<p class="text-muted">You have not created any course yet.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero p-5 mb-4">
+  <h1 class="display-6 fw-bold">Learn at your own pace</h1>
+  <p class="lead mb-3">Browse courses, study lessons, take quizzes and submit assignments - all in one place.</p>
+  <form class="d-flex gap-2" method="get">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Search courses...">
+    <button class="btn btn-light">Search</button>
+  </form>
+</div>
+<div class="row g-3">
+  {% for c in courses %}
+  <div class="col-md-4">
+    <div class="card h-100"><div class="card-body d-flex flex-column">
+      <h5 class="card-title">{{ c.title }}</h5>
+      <p class="text-muted small mb-2">by {{ c.instructor.username }} &middot; {{ c.lessons.count }} lessons</p>
+      <p class="card-text">{{ c.description|truncatewords:25 }}</p>
+      <div class="mt-auto">
+        <a href="{% url 'course_detail' c.pk %}" class="btn btn-primary btn-sm">View course</a>
+        {% if c.pk in enrolled_ids %}<span class="badge text-bg-success ms-2">Enrolled</span>{% endif %}
+      </div>
+    </div></div>
+  </div>
+  {% empty %}
+  <p class="text-muted">No courses found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

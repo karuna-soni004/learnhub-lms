@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-3">My learning</h3>
+<div class="row g-3 mb-4">
+  {% for row in data %}
+  <div class="col-md-4"><div class="card h-100"><div class="card-body">
+    <h5>{{ row.course.title }}</h5>
+    <div class="progress my-2"><div class="progress-bar bg-success" style="width: {{ row.progress }}%">{{ row.progress }}%</div></div>
+    <a class="btn btn-primary btn-sm" href="{% url 'course_detail' row.course.pk %}">Continue</a>
+  </div></div></div>
+  {% empty %}<p class="text-muted">You have not enrolled in any course yet. <a href="{% url 'home' %}">Browse courses</a>.</p>{% endfor %}
+</div>
+<h5>Recent quiz attempts</h5>
+<ul class="list-group">
+  {% for a in attempts %}<li class="list-group-item d-flex justify-content-between">{{ a.quiz.title }}<span class="badge text-bg-primary">{{ a.score }}/{{ a.total }}</span></li>
+  {% empty %}<li class="list-group-item text-muted">No attempts yet.</li>{% endfor %}
+</ul>
+{% endblock %}

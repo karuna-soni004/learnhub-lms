@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card text-center"><div class="card-body p-5">
+  <h3>{{ attempt.quiz.title }}</h3>
+  <p class="display-4 fw-bold">{{ attempt.score }} / {{ attempt.total }}</p>
+  <p class="text-muted">{{ percent }}% correct</p>
+  <a class="btn btn-primary" href="{% url 'take_quiz' attempt.quiz.pk %}">Try again</a>
+  <a class="btn btn-outline-secondary" href="{% url 'course_detail' attempt.quiz.course.pk %}">Back to course</a>
+</div></div>
+{% endblock %}

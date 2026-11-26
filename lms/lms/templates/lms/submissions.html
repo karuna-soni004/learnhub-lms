@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="small mb-2"><a href="{% url 'course_detail' assignment.course.pk %}">&larr; {{ assignment.course.title }}</a></nav>
+<h4>Submissions: {{ assignment.title }}</h4>
+<table class="table table-striped bg-white">
+  <thead><tr><th>Student</th><th>Submitted</th><th>File</th><th>Grade</th><th></th></tr></thead>
+  <tbody>
+  {% for s in submissions %}
+    <tr><td>{{ s.student.username }}</td><td>{{ s.submitted_at|date:"d M Y, H:i" }}</td>
+      <td><a href="{{ s.file.url }}" target="_blank">Download</a></td><td>{{ s.grade|default:"-" }}</td>
+      <td><a class="btn btn-sm btn-outline-primary" href="{% url 'grade_submission' s.pk %}">Grade</a></td></tr>
+  {% empty %}<tr><td colspan="5" class="text-muted">No submissions yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

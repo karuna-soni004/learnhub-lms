@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-8"><div class="card"><div class="card-body p-4">
+  <h4>Add question to "{{ quiz.title }}"</h4>
+  <form method="post">{% csrf_token %}
+    <div class="mb-3"><label class="form-label">Question</label>{{ qform.text }}</div>
+    <p class="small text-muted">Fill at least two choices and tick the correct one(s).</p>
+    {% for cf in choice_forms %}
+    <div class="input-group mb-2">
+      <div class="input-group-text">{{ cf.is_correct }}</div>{{ cf.text }}
+    </div>
+    {% endfor %}
+    <button class="btn btn-primary mt-2">Save question</button>
+    <button name="add_another" value="1" class="btn btn-outline-primary mt-2">Save &amp; add another</button>
+    <a class="btn btn-link mt-2" href="{% url 'course_detail' quiz.course.pk %}">Done</a>
+  </form>
+</div></div></div></div>
+<script>
+document.querySelectorAll('input[type=text]').forEach(i=>i.classList.add('form-control'));
+document.querySelectorAll('input[type=checkbox]').forEach(i=>i.classList.add('form-check-input','mt-0'));
+</script>
+{% endblock %}

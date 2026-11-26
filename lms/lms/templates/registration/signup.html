@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6"><div class="card"><div class="card-body p-4">
+  <h4 class="mb-3">Create your account</h4>
+  <form method="post">{% csrf_token %}
+    {% for f in form %}<div class="mb-3"><label class="form-label">{{ f.label }}</label>{{ f }}
+      {% if f.help_text %}<div class="form-text">{{ f.help_text|safe }}</div>{% endif %}
+      {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}
+    <button class="btn btn-primary w-100">Sign up</button>
+  </form>
+</div></div></div></div>
+<script>document.querySelectorAll('input:not([type=hidden]),select').forEach(i=>{i.classList.add(i.tagName==='SELECT'?'form-select':'form-control')});</script>
+{% endblock %}

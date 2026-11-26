@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+  <div>
+    <h2>{{ course.title }}</h2>
+    <p class="text-muted mb-1">Instructor: {{ course.instructor.username }}</p>
+  </div>
+  <div class="d-flex gap-2">
+    {% if can_manage %}
+      <a class="btn btn-outline-secondary btn-sm" href="{% url 'course_edit' course.pk %}">Edit</a>
+      <a class="btn btn-outline-secondary btn-sm" href="{% url 'course_students' course.pk %}">Students</a>
+      <a class="btn btn-outline-danger btn-sm" href="{% url 'course_delete' course.pk %}">Delete</a>
+    {% elif user.is_authenticated and not enrolled %}
+      <form method="post" action="{% url 'enroll' course.pk %}">{% csrf_token %}<button class="btn btn-success">Enroll now</button></form>
+    {% elif not user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'login' %}?next={{ request.path }}">Login to enroll</a>
+    {% endif %}
+  </div>
+</div>
+<p>{{ course.description|linebreaksbr }}</p>
+
+{% if enrolled %}
+<div class="mb-4">
+  <div class="small text-muted mb-1">Your progress: {{ progress }}%</div>
+  <div class="progress"><div class="progress-bar bg-success" style="width: {{ progress }}%"></div></div>
+</div>
+{% endif %}
+
+<div class="card mb-3"><div class="card-body">
+  <div class="d-flex justify-content-between"><h5>Lessons</h5>
+    {% if can_manage %}<a class="btn btn-primary btn-sm" href="{% url 'lesson_add' course.pk %}">+ Add lesson</a>{% endif %}</div>
+  <ul class="list-group list-group-flush">
+    {% for l in course.lessons.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>{{ forloop.counter }}. {{ l.title }}</span>
+      <span>
+        {% if l.pk in done_ids %}<span class="badge text-bg-success me-2">Done</span>{% endif %}
+        {% if enrolled or can_manage %}<a class="btn btn-outline-primary btn-sm" href="{% url 'lesson_detail' l.pk %}">Open</a>{% else %}<span class="text-muted small">Enroll to view</span>{% endif %}
+      </span>
+    </li>
+    {% empty %}<li class="list-group-item text-muted">No lessons yet.</li>{% endfor %}
+  </ul>
+</div></div>
+
+<div class="card mb-3"><div class="card-body">
+  <div class="d-flex justify-content-between"><h5>Quizzes</h5>
+    {% if can_manage %}<a class="btn btn-primary btn-sm" href="{% url 'quiz_add' course.pk %}">+ Add quiz</a>{% endif %}</div>
+  <ul class="list-group list-group-flush">
+    {% for q in course.quizzes.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>{{ q.title }} <span class="text-muted small">({{ q.questions.count }} questions)</span></span>
+      <span>
+        {% if can_manage %}<a class="btn btn-outline-secondary btn-sm" href="{% url 'question_add' q.pk %}">+ Question</a>{% endif %}
+        {% if enrolled and q.questions.count %}<a class="btn btn-outline-primary btn-sm" href="{% url 'take_quiz' q.pk %}">Take quiz</a>{% endif %}
+      </span>
+    </li>
+    {% empty %}<li class="list-group-item text-muted">No quizzes yet.</li>{% endfor %}
+  </ul>
+</div></div>
+
+<div class="card mb-3"><div class="card-body">
+  <div class="d-flex justify-content-between"><h5>Assignments</h5>
+    {% if can_manage %}<a class="btn btn-primary btn-sm" href="{% url 'assignment_add' course.pk %}">+ Add assignment</a>{% endif %}</div>
+  <ul class="list-group list-group-flush">
+    {% for a in course.assignments.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>{{ a.title }} {% if a.due_date %}<span class="text-muted small">(due {{ a.due_date }})</span>{% endif %}
+        <div class="small text-muted">{{ a.description }}</div></span>
+      <span>
+        {% if can_manage %}<a class="btn btn-outline-secondary btn-sm" href="{% url 'submissions' a.pk %}">Submissions ({{ a.submissions.count }})</a>{% endif %}
+        {% if enrolled %}<a class="btn btn-outline-primary btn-sm" href="{% url 'submit_assignment' a.pk %}">{% if a.pk in submitted_ids %}Resubmit{% else %}Submit{% endif %}</a>{% endif %}
+      </span>
+    </li>
+    {% empty %}<li class="list-group-item text-muted">No assignments yet.</li>{% endfor %}
+  </ul>
+</div></div>
+{% endblock %}
